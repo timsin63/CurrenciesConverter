@@ -34,6 +34,8 @@ class CurrenciesMapper {
             rates.add(currencyRate);
         }
 
-        return new RevolutCurrencies(response.getBase(), date, rates);
+        RevolutCurrencyRate base = new RevolutCurrencyRate(response.getBase(), response.getBase(), 1);
+
+        return new RevolutCurrencies(base, date, rates);
     }
 }

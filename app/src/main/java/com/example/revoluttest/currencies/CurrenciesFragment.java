@@ -62,7 +62,7 @@ public class CurrenciesFragment extends BaseFragment implements CurrenciesContra
     @Override
     public void showCurrencies(RevolutCurrencies currencies) {
         if (adapter != null) {
-            adapter.setCurrencyRates(currencies.getRates());
+            adapter.updateCurrencyRates(currencies);
         }
     }
 }

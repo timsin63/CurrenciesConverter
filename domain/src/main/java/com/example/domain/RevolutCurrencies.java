@@ -4,17 +4,17 @@ import java.util.Date;
 import java.util.List;
 
 public class RevolutCurrencies {
-    private String base;
+    private RevolutCurrencyRate base;
     private Date date;
     private List<RevolutCurrencyRate> rates;
 
-    public RevolutCurrencies(String base, Date date, List<RevolutCurrencyRate> rates) {
+    public RevolutCurrencies(RevolutCurrencyRate base, Date date, List<RevolutCurrencyRate> rates) {
         this.base = base;
         this.date = date;
         this.rates = rates;
     }
 
-    public String getBase() {
+    public RevolutCurrencyRate getBase() {
         return base;
     }
 
