@@ -5,7 +5,6 @@ import java.util.Locale;
 
 public class RevolutCurrencyRate {
     private final String code;
-    private final String flagImageUrl;
     private final Currency currency;
     private final String base;
     private double value;
@@ -15,7 +14,6 @@ public class RevolutCurrencyRate {
         this.base = base;
         this.value = value;
         this.currency = Currency.getInstance(code);
-        this.flagImageUrl = null;
     }
 
     public String getCode() {
@@ -32,9 +30,5 @@ public class RevolutCurrencyRate {
 
     public void setValue(double value) {
         this.value = value;
-    }
-
-    public String getFlagImageUrl() {
-        return flagImageUrl;
     }
 }

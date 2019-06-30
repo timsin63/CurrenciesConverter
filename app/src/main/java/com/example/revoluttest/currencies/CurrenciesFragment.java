@@ -28,7 +28,7 @@ public class CurrenciesFragment extends BaseFragment implements CurrenciesContra
         View view = inflater.inflate(R.layout.f_currencies, parent, false);
 
         RecyclerView currencyRateList = view.findViewById(R.id.list_currencies);
-        adapter = new CurrencyRatesAdapter();
+        adapter = new CurrencyRatesAdapter(getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         currencyRateList.setLayoutManager(layoutManager);
 

@@ -18,7 +18,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -35,5 +35,7 @@ ext {
     rxAndroidVersion = "2.1.1"
     retrofitVersion = "2.6.0"
     gsonConverterVersion = "2.6.0"
-    roomVersion="2.1.0"
+    roomVersion = "2.1.0"
+    countryDataVersion = "v1.1.0"
+    picassoVersion = "2.5.2"
 }
