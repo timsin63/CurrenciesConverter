@@ -31,4 +31,14 @@ public class RevolutCurrencyRate {
     public void setValue(double value) {
         this.value = value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        RevolutCurrencyRate rate = (RevolutCurrencyRate) o;
+
+        return rate != null
+                && this.getCode().equals(rate.getCode())
+                && this.getName().equals(rate.getName())
+                && this.getValue() == rate.getValue();
+    }
 }

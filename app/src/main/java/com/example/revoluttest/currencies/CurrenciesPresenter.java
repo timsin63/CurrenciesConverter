@@ -2,6 +2,9 @@ package com.example.revoluttest.currencies;
 
 import com.example.model.CurrenciesModel;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -19,7 +22,9 @@ public class CurrenciesPresenter extends CurrenciesContract.Presenter {
             model = new CurrenciesModel();
         }
 
-        addDisposable(model.loadLatestCurrencies()
+        addDisposable(
+                Observable.interval(1, TimeUnit.SECONDS)
+                .flatMapSingle(tick -> model.loadLatestCurrencies())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rates -> getView().showCurrencies(rates)));

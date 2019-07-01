@@ -29,6 +29,9 @@ public class CurrenciesFragment extends BaseFragment implements CurrenciesContra
 
         RecyclerView currencyRateList = view.findViewById(R.id.list_currencies);
         adapter = new CurrencyRatesAdapter(getContext());
+
+        adapter.setOnItemClickListener(() -> currencyRateList.scrollToPosition(0));
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         currencyRateList.setLayoutManager(layoutManager);
 
@@ -62,7 +65,7 @@ public class CurrenciesFragment extends BaseFragment implements CurrenciesContra
     @Override
     public void showCurrencies(RevolutCurrencies currencies) {
         if (adapter != null) {
-            adapter.updateCurrencyRates(currencies);
+            adapter.updateCurrencyRates(currencies.getBase(), currencies.getRates());
         }
     }
 }
