@@ -47,6 +47,7 @@
         android:layout_marginEnd="@dimen/currency_item_horizontal_margin"
         android:inputType="number"
         android:textSize="@dimen/currency_item_code_text_size"
+        android:enabled="false"
         tools:text="100.00"
         tools:ignore="Autofill,LabelFor" />
 

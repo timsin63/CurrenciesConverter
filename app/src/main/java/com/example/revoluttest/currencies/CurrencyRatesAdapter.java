@@ -8,26 +8,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.domain.RevolutCurrencyRate;
 import com.example.revoluttest.R;
-import com.example.revoluttest.flags.CircleTransformation;
+import com.example.revoluttest.converter.DependentConvertableList;
+import com.example.revoluttest.converter.RateList;
 import com.example.revoluttest.flags.CurrencyFlagsProvider;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-class CurrencyRatesAdapter extends RecyclerView.Adapter<CurrencyRatesAdapter.CurrencyRatesViewHolder> {
+import io.reactivex.disposables.Disposable;
+
+class CurrencyRatesAdapter extends RecyclerView.Adapter<CurrencyRatesViewHolder> {
 
     private Context context;
-    private String chosenCurrencyCode;
-    private List<RevolutCurrencyRate> currencyRates = Collections.synchronizedList(new ArrayList<>());
-    private RevolutCurrencyRate base;
+
+    private boolean skipTextChange = false;
+
+    private DependentConvertableList<RevolutCurrencyRate> currencyRates;
+    private List<RevolutCurrencyRate> adapterRates = new ArrayList<>();
     private OnItemClickListener onItemClickListener;
+    private CurrencyTextChangeListener currencyValueListener = new CurrencyTextChangeListener();
 
     static final String KEY_CODE = "key_currency_code";
     static final String KEY_NAME = "key_currency_name";
@@ -40,36 +42,45 @@ class CurrencyRatesAdapter extends RecyclerView.Adapter<CurrencyRatesAdapter.Cur
     @NonNull
     @Override
     public CurrencyRatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.i_currency, parent, false);
 
-        CurrencyRatesViewHolder viewHolder = new CurrencyRatesViewHolder(itemView);
+        int inflateViewId = viewType == CurrencyRatesViewHolder.ITEM_TYPE_BASE ? R.layout.i_currency_base : R.layout.i_currency_rate;
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(inflateViewId, parent, false);
+
+        CurrencyRatesViewHolder viewHolder = new CurrencyRatesViewHolder(context, itemView);
 
         itemView.setOnClickListener(v -> {
             int position = viewHolder.getAdapterPosition();
-            chosenCurrencyCode = currencyRates.get(position).getCode();
+            RevolutCurrencyRate chosenRate = adapterRates.get(position);
 
-            updateCurrencyRates(base, currencyRates);
+            currencyRates.chooseItem(chosenRate);
+            skipTextChange = true;
+            applyChanges();
 
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClicked();
             }
         });
 
+        if (viewType == CurrencyRatesViewHolder.ITEM_TYPE_BASE) {
+            currencyValueListener.applyTextChangeListener(viewHolder.getCurrencyValue());
+        }
+
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull CurrencyRatesViewHolder currencyRatesViewHolder, int position) {
-        RevolutCurrencyRate currencyRate = currencyRates.get(position);
+        RevolutCurrencyRate currencyRate = adapterRates.get(position);
 
-        currencyRatesViewHolder.currencyCode.setText(currencyRate.getCode());
-        currencyRatesViewHolder.currencyName.setText(currencyRate.getName());
-
-        currencyRatesViewHolder.currencyValue.setText(String.valueOf(currencyRate.getValue()));
-        currencyRatesViewHolder.currencyValue.setEnabled(currencyRate.getCode().equals(chosenCurrencyCode));
-
+        currencyRatesViewHolder.setCurrencyCode(currencyRate.getCode());
+        currencyRatesViewHolder.setCurrencyName(currencyRate.getName());
+        if (getItemViewType(position) == CurrencyRatesViewHolder.ITEM_TYPE_BASE) {
+            skipTextChange = true;
+            currencyRatesViewHolder.setCurrencyValue(currencyRates.getChosenCount());
+        } else {
+            currencyRatesViewHolder.setCurrencyValue(currencyRate.getValue());
+        }
         int flagResource = CurrencyFlagsProvider.getInstance().getCurrencyFlag(currencyRate.getCode());
-
         currencyRatesViewHolder.setCurrencyFlagImage(flagResource);
     }
 
@@ -83,7 +94,7 @@ class CurrencyRatesAdapter extends RecyclerView.Adapter<CurrencyRatesAdapter.Cur
             if (!bundle.isEmpty()) {
                 String code = bundle.getString(KEY_CODE);
                 if (code != null) {
-                    currencyRatesViewHolder.currencyCode.setText(code);
+                    currencyRatesViewHolder.setCurrencyCode(code);
 
                     int flagResource = CurrencyFlagsProvider.getInstance().getCurrencyFlag(code);
                     currencyRatesViewHolder.setCurrencyFlagImage(flagResource);
@@ -91,83 +102,64 @@ class CurrencyRatesAdapter extends RecyclerView.Adapter<CurrencyRatesAdapter.Cur
 
                 String name = bundle.getString(KEY_NAME);
                 if (name != null) {
-                    currencyRatesViewHolder.currencyName.setText(name);
+                    currencyRatesViewHolder.setCurrencyName(name);
                 }
 
-                if (position == 0) {
-                    currencyRatesViewHolder.currencyValue.setEnabled(true);
-                    currencyRatesViewHolder.currencyValue.requestFocus();
-                } else {
+                if (getItemViewType(position) == CurrencyRatesViewHolder.ITEM_TYPE_RATE) {
                     double value = bundle.getDouble(KEY_VALUE);
                     if (value != 0) {
-                        currencyRatesViewHolder.currencyValue.setText(String.valueOf(value));
+                        currencyRatesViewHolder.setCurrencyValue(value);
                     }
-                    currencyRatesViewHolder.currencyValue.setEnabled(false);
                 }
             }
         }
     }
 
     @Override
-    public int getItemCount() {
-        return currencyRates.size();
+    public int getItemViewType(int position) {
+        return position == 0 ? CurrencyRatesViewHolder.ITEM_TYPE_BASE : CurrencyRatesViewHolder.ITEM_TYPE_RATE;
     }
 
-    void updateCurrencyRates(RevolutCurrencyRate base, final List<RevolutCurrencyRate> newCurrencyRates) {
-        this.base = base;
 
-        List<RevolutCurrencyRate> rates = new ArrayList<>(newCurrencyRates);
+    @Override
+    public int getItemCount() {
+        return adapterRates.size();
+    }
 
-        if (!rates.contains(base)) {
-            rates.add(0, base);
-        }
-
-        if (chosenCurrencyCode == null) {
-            chosenCurrencyCode = base.getCode();
-        } else {
-            for (int i = 0; i < rates.size(); i++) {
-                if (rates.get(i).getCode().equals(chosenCurrencyCode)) {
-                    RevolutCurrencyRate item = rates.remove(i);
-                    rates.add(0, item);
-                    break;
+    private Disposable currencyValueObserver = currencyValueListener
+            .getCurrencyValueRelay()
+            .subscribe(value -> {
+                if (skipTextChange) {
+                    skipTextChange = false;
+                    return;
                 }
-            }
+
+                currencyRates.setChosenCount(value);
+                applyChanges();
+            });
+
+    public void updateCurrencyRates(RevolutCurrencyRate base, final List<RevolutCurrencyRate> newCurrencyRates) {
+        if (currencyRates == null) {
+            currencyRates = new RateList(base);
         }
 
-        final CurrencyRatesDiffCallback diffCallback = new CurrencyRatesDiffCallback(this.currencyRates, rates);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        currencyRates.updateList(base, newCurrencyRates);
 
-        this.currencyRates.clear();
-        this.currencyRates = Collections.synchronizedList(rates);
+        applyChanges();
+    }
+
+    private void applyChanges() {
+        List<RevolutCurrencyRate> convertedList = new ArrayList<>(currencyRates.getConvertedValues());
+
+        final CurrencyRatesDiffCallback diffCallback = new CurrencyRatesDiffCallback(adapterRates, convertedList);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         diffResult.dispatchUpdatesTo(this);
+
+        adapterRates = new ArrayList<>(convertedList);
     }
 
     void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
-    }
-
-    class CurrencyRatesViewHolder extends RecyclerView.ViewHolder {
-
-        private ImageView currencyFlag;
-        private TextView currencyCode;
-        private TextView currencyName;
-        private TextView currencyValue;
-
-        CurrencyRatesViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            currencyFlag = itemView.findViewById(R.id.country_flag);
-            currencyCode = itemView.findViewById(R.id.currency_code);
-            currencyName = itemView.findViewById(R.id.currency_name);
-            currencyValue = itemView.findViewById(R.id.currency_value);
-        }
-
-        void setCurrencyFlagImage(int resId) {
-            Picasso.with(context)
-                    .load(resId)
-                    .transform(new CircleTransformation())
-                    .into(currencyFlag);
-        }
     }
 
     interface OnItemClickListener {

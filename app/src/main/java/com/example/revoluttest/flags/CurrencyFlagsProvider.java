@@ -36,7 +36,8 @@ public class CurrencyFlagsProvider {
     }
 
     public int getCurrencyFlag(String currencyCode) {
-        int flagResource = flagsMap.containsKey(currencyCode) ? flagsMap.get(currencyCode) : 0;
+        Integer res = flagsMap.get(currencyCode);
+        int flagResource = res != null ? res : 0;
 
         return flagResource != 0 ? flagResource : World.getWorldFlag();
     }
