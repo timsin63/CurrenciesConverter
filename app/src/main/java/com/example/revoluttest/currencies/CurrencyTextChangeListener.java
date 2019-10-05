@@ -15,10 +15,14 @@ public class CurrencyTextChangeListener {
         view.addTextChangedListener(textChangeListener);
     }
 
+    public void removeTextChangeListener(TextView view) {
+        view.removeTextChangedListener(textChangeListener);
+    }
+
     private TextWatcher textChangeListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            // empty method
         }
 
         @Override
@@ -31,13 +35,7 @@ public class CurrencyTextChangeListener {
 
         @Override
         public void afterTextChanged(Editable s) {
-//            if (s.length() == 0) {
-//                s.append('0');
-//            } else {
-//                if (s.charAt(0) == '0') {
-//                    s.delete(0, 0);
-//                }
-//            }
+            // empty method
         }
     };
 

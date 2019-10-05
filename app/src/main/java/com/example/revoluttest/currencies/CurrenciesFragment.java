@@ -2,23 +2,25 @@ package com.example.revoluttest.currencies;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.domain.RevolutCurrencies;
 import com.example.revoluttest.R;
 import com.example.revoluttest.base.BaseFragment;
+import com.example.revoluttest.currencies.adapter.CurrencyRatesAdapter;
+
+import java.util.ArrayList;
 
 public class CurrenciesFragment extends BaseFragment implements CurrenciesContract.View {
 
-    public static final String TAG = "com.example.revoluttest.currencies.CurrenciesFragment";
-
-    CurrencyRatesAdapter adapter;
+    private CurrencyRatesAdapter adapter;
 
     @Nullable
     @Override
@@ -28,12 +30,11 @@ public class CurrenciesFragment extends BaseFragment implements CurrenciesContra
         View view = inflater.inflate(R.layout.f_currencies, parent, false);
 
         RecyclerView currencyRateList = view.findViewById(R.id.list_currencies);
-        adapter = new CurrencyRatesAdapter(getContext());
-
-        adapter.setOnItemClickListener(() -> currencyRateList.scrollToPosition(0));
-
+        adapter = new CurrencyRatesAdapter(getContext(), new ArrayList<>());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         currencyRateList.setLayoutManager(layoutManager);
+
+        adapter.setOnItemClickListener(() -> currencyRateList.scrollToPosition(0));
 
         currencyRateList.setAdapter(adapter);
 

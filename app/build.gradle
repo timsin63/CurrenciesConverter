@@ -37,4 +37,5 @@ dependencies {
     implementation "com.jakewharton.rxrelay2:rxrelay:$rootProject.rxRelayVersion"
     implementation "com.github.blongho:world-country-data:$rootProject.countryDataVersion"
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
+    implementation "com.hannesdorfmann:adapterdelegates4:$rootProject.adapterDelegatesVersion"
 }

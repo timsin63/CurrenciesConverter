@@ -9,7 +9,7 @@ public class RateList implements DependentConvertableList<RevolutCurrencyRate> {
 
     private RevolutCurrencyRate base;
     private RevolutCurrencyRate chosenRate;
-    private double chosenCount;
+    private double baseCount;
     private List<RevolutCurrencyRate> rates;
 
     public RateList(RevolutCurrencyRate base) {
@@ -20,22 +20,21 @@ public class RateList implements DependentConvertableList<RevolutCurrencyRate> {
         this.base = base;
         this.chosenRate = base;
         this.rates = rates;
-        this.chosenCount = base.getValue();
+        this.baseCount = base.getValue();
     }
 
     @Override
     public void chooseItem(RevolutCurrencyRate chosenItem) {
-        this.chosenRate = chosenItem;
-        setChosenCount(chosenItem.getValue());
+        this.chosenRate = new RevolutCurrencyRate(chosenItem.getCode(), base.getCode(), chosenItem.getValue() / baseCount);
     }
 
     @Override
-    public void setChosenCount(double value) {
-        this.chosenCount = value;
+    public void setBaseCount(double value) {
+        this.baseCount = CurrencyConverter.getBaseCount(base, chosenRate, value);
     }
 
-    public double getChosenCount() {
-        return chosenCount;
+    public double getBaseCount() {
+        return baseCount;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class RateList implements DependentConvertableList<RevolutCurrencyRate> {
     }
 
     @Override
-    public void updateList(RevolutCurrencyRate base, List<RevolutCurrencyRate> newList) {
+    public synchronized void updateList(RevolutCurrencyRate base, List<RevolutCurrencyRate> newList) {
         if (this.base == null) {
             this.base = base;
         }
@@ -59,10 +58,11 @@ public class RateList implements DependentConvertableList<RevolutCurrencyRate> {
         for (RevolutCurrencyRate rate : rates) {
             if (rate.getCode().equals(chosenRate.getCode())) continue;
 
-            RevolutCurrencyRate convertedRate = CurrencyConverter.getConvertedRate(rate, chosenRate, chosenCount);
+            RevolutCurrencyRate convertedRate = CurrencyConverter.getConvertedRate(rate, base, baseCount);
             convertedRates.add(convertedRate);
         }
-        convertedRates.add(0, chosenRate);
+        RevolutCurrencyRate chosen = new RevolutCurrencyRate(chosenRate.getCode(), chosenRate.getCode(), chosenRate.getValue() * baseCount);
+        convertedRates.add(0, chosen);
 
         return convertedRates;
     }

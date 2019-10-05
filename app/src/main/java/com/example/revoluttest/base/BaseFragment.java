@@ -1,6 +1,6 @@
 package com.example.revoluttest.base;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 public class BaseFragment extends Fragment implements BaseContract.View {
     private BaseContract.Presenter presenter;

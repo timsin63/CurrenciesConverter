@@ -39,4 +39,5 @@ ext {
     roomVersion = "2.1.0"
     countryDataVersion = "v1.1.0"
     picassoVersion = "2.5.2"
+    adapterDelegatesVersion = "4.2.0"
 }

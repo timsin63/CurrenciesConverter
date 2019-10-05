@@ -5,9 +5,9 @@ import java.util.List;
 public interface DependentConvertableList<T> {
     void chooseItem(T chosenItem);
 
-    void setChosenCount(double value);
+    void setBaseCount(double value);
 
-    double getChosenCount();
+    double getBaseCount();
 
     void updateList(List<T> newList);
 

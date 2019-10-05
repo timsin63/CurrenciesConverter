@@ -1,8 +1,9 @@
-package com.example.revoluttest.currencies;
+package com.example.revoluttest.currencies.adapter;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.example.domain.RevolutCurrencyRate;
 
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.revoluttest.currencies.CurrencyRatesAdapter.KEY_CODE;
-import static com.example.revoluttest.currencies.CurrencyRatesAdapter.KEY_NAME;
-import static com.example.revoluttest.currencies.CurrencyRatesAdapter.KEY_VALUE;
+import static com.example.revoluttest.currencies.adapter.CurrencyAdapterDelegate.KEY_CODE;
+import static com.example.revoluttest.currencies.adapter.CurrencyAdapterDelegate.KEY_NAME;
+import static com.example.revoluttest.currencies.adapter.CurrencyAdapterDelegate.KEY_VALUE;
 
 class CurrencyRatesDiffCallback extends DiffUtil.Callback {
     private List<RevolutCurrencyRate> oldList;
