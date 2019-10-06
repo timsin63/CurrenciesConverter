@@ -35,10 +35,13 @@ public class CurrencyTextChangeListener {
 
         @Override
         public void afterTextChanged(Editable s) {
-            // empty method
+            for (char valueCharacter : s.toString().toCharArray()) {
+                if (valueCharacter == '0') {
+                    s.replace(0, 1, "");
+                } else break;
+            }
         }
     };
-
 
 
     public Relay<Float> getCurrencyValueRelay() {
