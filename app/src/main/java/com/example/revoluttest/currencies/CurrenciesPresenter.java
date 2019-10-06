@@ -29,4 +29,9 @@ public class CurrenciesPresenter extends CurrenciesContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rates -> getView().showCurrencies(rates)));
     }
+
+    @Override
+    void onItemSelected() {
+        getView().focusSelected();
+    }
 }

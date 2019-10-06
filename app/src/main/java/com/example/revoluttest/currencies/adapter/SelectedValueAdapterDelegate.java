@@ -40,7 +40,7 @@ class SelectedValueAdapterDelegate extends CurrencyAdapterDelegate {
     protected RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.i_currency_base, parent, false);
 
-        RateViewHolder viewHolder = new RateViewHolder(context, itemView);
+        SelectedValueViewHolder viewHolder = new SelectedValueViewHolder(context, itemView);
         currencyValueListener.applyTextChangeListener(viewHolder.getCurrencyValue());
 
         textChangeListenerDisposable = currencyValueObserver.subscribe(val -> {
@@ -56,23 +56,10 @@ class SelectedValueAdapterDelegate extends CurrencyAdapterDelegate {
     protected void onBindViewHolder(@NonNull List<RevolutCurrencyRate> items, int position,
                                     @NonNull RecyclerView.ViewHolder viewHolder, @NonNull List<Object> payloads) {
 
-        RateViewHolder holder = (RateViewHolder) viewHolder;
+        SelectedValueViewHolder holder = (SelectedValueViewHolder) viewHolder;
         currencyValueListener.removeTextChangeListener(holder.getCurrencyValue());
         super.onBindViewHolder(items, position, viewHolder, payloads);
         currencyValueListener.applyTextChangeListener(holder.getCurrencyValue());
-    }
-
-
-    @Override
-    protected void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        super.onViewRecycled(holder);
-
-        RateViewHolder viewHolder = (RateViewHolder) holder;
-
-        if (context != null && viewHolder.getCurrencyValue() != null) {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(viewHolder.getCurrencyValue().getWindowToken(), 0);
-        }
     }
 
     void setSelectedValueChangeListener(SelectedValueChangeListener listener) {
