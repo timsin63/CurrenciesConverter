@@ -20,7 +20,7 @@ abstract class CurrencyAdapterDelegate extends AdapterDelegate<List<RevolutCurre
     private void onBindViewHolder(@NonNull List<RevolutCurrencyRate> items, int position, @NonNull RecyclerView.ViewHolder holder) {
         RevolutCurrencyRate currencyRate = items.get(position);
 
-        RateViewHolderBase currencyRatesViewHolder = (RateViewHolderBase) holder;
+        RateViewHolder currencyRatesViewHolder = (RateViewHolder) holder;
 
         currencyRatesViewHolder.setCurrencyCode(currencyRate.getCode());
         currencyRatesViewHolder.setCurrencyName(currencyRate.getName());
@@ -35,7 +35,7 @@ abstract class CurrencyAdapterDelegate extends AdapterDelegate<List<RevolutCurre
         if (payloads.isEmpty()) {
             onBindViewHolder(items, position, holder);
         } else {
-            RateViewHolderBase currencyRatesViewHolder = (RateViewHolderBase) holder;
+            RateViewHolder currencyRatesViewHolder = (RateViewHolder) holder;
 
             Bundle bundle = (Bundle) payloads.get(0);
 

@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
-class RateViewHolderBase extends RecyclerView.ViewHolder {
+class RateViewHolder extends RecyclerView.ViewHolder {
 
     private Context context;
     private ImageView currencyFlag;
@@ -22,7 +22,7 @@ class RateViewHolderBase extends RecyclerView.ViewHolder {
     private TextView currencyName;
     private TextView currencyValue;
 
-    RateViewHolderBase(@NonNull Context context, @NonNull View itemView) {
+    RateViewHolder(@NonNull Context context, @NonNull View itemView) {
         super(itemView);
 
         this.context = context;

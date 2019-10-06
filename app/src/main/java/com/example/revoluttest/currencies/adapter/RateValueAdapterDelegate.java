@@ -32,7 +32,7 @@ public class RateValueAdapterDelegate extends CurrencyAdapterDelegate {
     protected RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.i_currency_rate, parent, false);
 
-        return new RateValueViewHolder(context, itemView);
+        return new RateViewHolder(context, itemView);
     }
 
     @Override
